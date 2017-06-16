@@ -1,0 +1,7 @@
+{
+  "name": "wakanda-instance-generator",
+  "description": "Service to generate wakanda instances",
+  "repository": "https://github.com/lucasventurasc/wakanda-instance-generator",
+  "keywords": ["node", "express", "static"],
+  "addons" : ["heroku-redis"]
+}
