@@ -43,7 +43,7 @@ class HerokuAppGenerator {
         request(options, callback);
     }
 
-    verifyAppCreated(name, callbackAppCreated) {
+    verifyAppCreated(name, callbackAppCreated, callbackError) {
         var options = {
             url: 'https://api.heroku.com/apps/' + name,
             method: 'GET',
@@ -52,6 +52,8 @@ class HerokuAppGenerator {
         request(options, function(error, response, body) {
             if(response.statusCode === 200) {
                 callbackAppCreated.apply(this);
+            } else {
+                callbackError.apply(this);
             }
         });
     }

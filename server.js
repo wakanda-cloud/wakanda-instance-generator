@@ -3,7 +3,7 @@ var app = express();
 
 var bodyparser = require('body-parser');
 
-app.set('port', (process.env.PORT || 3000));
+app.set('port', (process.env.PORT || 5000));
 app.listen(app.get('port'), function () {
     var host = process.env.host;
     var port = app.get('port');
@@ -19,3 +19,4 @@ var routes = require('./routes');
 app.use(cors());
 app.use(bodyparser.json());
 app.post('/generate', routes.generate);
+app.get('/projects', routes.projects);
