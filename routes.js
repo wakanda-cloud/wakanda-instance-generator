@@ -12,7 +12,11 @@ var WakandaProjectStorage = require('./app/WakandaProjectStorage');
 routes.projects = function (req ,res) {
     let wakandaProjectStorage = new WakandaProjectStorage();
     wakandaProjectStorage.fetchProjects(req.query.email, function(projects) {
-         res.status(200).send(projects);
+        if(!projects || projects.length == 0) {
+            res.status(204).send();
+        } else {
+            res.status(200).send(projects);
+        }
     });
 };
 
