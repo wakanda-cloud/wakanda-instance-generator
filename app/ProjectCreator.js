@@ -10,14 +10,18 @@ class ProjectCreator {}
 ProjectCreator.createProject = function (wakandaInstanceData) {
     new HerokuAppGenerator().generate({
         company: wakandaInstanceData.company,
-        appName: wakandaInstanceData.name,
+        name: wakandaInstanceData.name,
         decryptKey: wakandaInstanceData.decryptKey,
         securityToken: wakandaInstanceData.securityToken
-    }, this.proceedProjectCreation);
+    }, function(appName, url) {
+        ProjectCreator.proceedProjectCreation(appName, url, wakandaInstanceData);
+    });
 };
 
-ProjectCreator.proceedProjectCreation = function (wakandaInstanceData) {
-    new HerokuRedisConfigurator().configureRedis(wakandaInstanceData.name);
+ProjectCreator.proceedProjectCreation = function (appName, url, wakandaInstanceData) {
+    new HerokuRedisConfigurator().configureRedis(appName);
+
+    wakandaInstanceData.url = url;
     new WakandaProjectStorage().saveProject(wakandaInstanceData);
     new WakandaApiKeyRegister().registerApiKey(wakandaInstanceData);
 };

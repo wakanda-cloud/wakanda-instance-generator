@@ -12,14 +12,13 @@ class HerokuAppGenerator {
     }
 
     generate(appOptions, onSuccess) {
-        let name = appOptions.appName;
-        name = appOptions.company.replace(' ', '').trim().toLowerCase() + "-" +
-        name.replace(' ', '').trim().toLowerCase();
-        name = name.replace(/[^a-zA-Z0-9]/g, '');
+        let appName = appOptions.company.replace(' ', '').replace(/[^a-zA-Z0-9]/g, '').trim().toLowerCase();
+        appName = appName + "-";
+        appName = appName + appOptions.name.replace(' ', '').replace(/[^a-zA-Z0-9]/g, '').trim().toLowerCase();
 
         let data = {
             app : {
-                name: name
+                name: appName
             },
             source_blob: {
                 url: "https://github.com/lucasventurasc/wakanda/tarball/master"
@@ -39,15 +38,14 @@ class HerokuAppGenerator {
 
         function callback(error, response, body) {
             if (!error && response.statusCode >= 200 && response.statusCode <= 206) {
-                onSuccess.call();
-                console.log("Created app " + name);
+                onSuccess.call(this, appName, "https://" + appName + ".herokuapp.com");
+                console.log("Created app " + appName);
             } else {
                 console.log('Status error received: ' + response.statusCode + " because : " + body);
             }
         }
 
         request(options, callback);
-        return "https://" + name + ".herokuapp.com";
     }
 
     verifyAppCreated(name, callbackAppCreated, callbackError) {

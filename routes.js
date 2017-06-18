@@ -3,6 +3,7 @@
 let routes = function(){};
 
 let WakandaProjectStorage = require('./app/WakandaProjectStorage');
+let HerokuAppGenerator = require('./app/HerokuAppGenerator');
 let ProjectCreator = require('./app/ProjectCreator');
 
 routes.projects = function (req ,res) {
@@ -21,7 +22,7 @@ routes.generate = function(req, res) {
         res.status(400).send("App name is necessary");
         return;
     }
-
+    process.env.herokuauth = 'Bearer 407b8340-103b-4cfb-b3d3-825938c8cb99';
     if(!process.env.herokuauth) {
         res.status(500).send("Auth not configured for this server");
         throw "Heroku Auth (key:herokuauth) not configured for this server";
@@ -36,6 +37,7 @@ routes.generate = function(req, res) {
         zipcode: req.body.zipcode,
         country: req.country,
         city: req.city
+
     };
     console.log(JSON.stringify(wakandaInstanceData));
 
