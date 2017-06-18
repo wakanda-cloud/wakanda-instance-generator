@@ -39,7 +39,7 @@ routes.generate = function(req, res) {
     };
     console.log(JSON.stringify(wakandaInstanceData));
 
-    ProjectCreator.createProject(req);
+    ProjectCreator.createProject(wakandaInstanceData);
 
     res.status(202).send();
 };
