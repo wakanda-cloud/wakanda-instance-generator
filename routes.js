@@ -1,14 +1,9 @@
 'use strict';
 
 let routes = function(){};
-let crypto = require('crypto');
-let timers = require('timers');
 
-let HerokuAppGenerator = require('./app/HerokuAppGenerator');
-let HerokuSecurityUpdater = require('./app/HerokuSecurityUpdater');
-let HerokuRedisConfigurator = require('./app/HerokuRedisConfigurator');
 let WakandaProjectStorage = require('./app/WakandaProjectStorage');
-let WakandaApiKeyRegister = require('./app/WakandaApiKeyRegister');
+let ProjectCreator = require('./app/ProjectCreator');
 
 routes.projects = function (req ,res) {
     let wakandaProjectStorage = new WakandaProjectStorage();
@@ -20,7 +15,6 @@ routes.projects = function (req ,res) {
         }
     });
 };
-
 
 routes.generate = function(req, res) {
     if(!req.body.name) {
@@ -39,37 +33,19 @@ routes.generate = function(req, res) {
         name: req.body.name,
         decryptKey: req.body.decryptKey,
         securityToken: req.body.securityToken,
-        zipcode : req.body.zipcode,
-        country : req.country,
-        city : req.city
+        zipcode: req.body.zipcode,
+        country: req.country,
+        city: req.city
     };
-
     console.log(JSON.stringify(wakandaInstanceData));
 
-    new HerokuAppGenerator().generate({
-        company: wakandaInstanceData.company,
-        appName : wakandaInstanceData.name,
-        decryptKey: wakandaInstanceData.decryptKey,
-        securityToken: wakandaInstanceData.securityToken
-    }, function(url) {
-        let loop = setInterval(function () {
-            let whenAppCreated = function () {
-                new HerokuRedisConfigurator().configureRedis(wakandaInstanceData.name);
-                clearInterval(loop);
-            };
+    ProjectCreator.createProject(req);
 
-            let whenErrorHappens = function () {
-                clearInterval(loop);
-            };
+    res.status(202).send();
+};
 
-            new HerokuAppGenerator().verifyAppCreated(wakandaInstanceData.name, whenAppCreated, whenErrorHappens);
-        }, 1000);
+routes.createProject = function (req) {
 
-        new WakandaProjectStorage().save(wakandaInstanceData);
-        new WakandaApiKeyRegister().register(wakandaInstanceData);
-    });
-
-    res.status(200).send();
 };
 
 module.exports = routes;

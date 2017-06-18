@@ -11,7 +11,7 @@ class HerokuAppGenerator {
         }
     }
 
-    generate(appOptions) {
+    generate(appOptions, onSuccess) {
         let name = appOptions.appName;
         name = appOptions.company.replace(' ', '').trim().toLowerCase() + "-" +
         name.replace(' ', '').trim().toLowerCase();
@@ -39,6 +39,7 @@ class HerokuAppGenerator {
 
         function callback(error, response, body) {
             if (!error && response.statusCode >= 200 && response.statusCode <= 206) {
+                onSuccess.call();
                 console.log("Created app " + name);
             } else {
                 console.log('Status error received: ' + response.statusCode + " because : " + body);

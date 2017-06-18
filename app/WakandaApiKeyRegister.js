@@ -6,7 +6,7 @@ var request = require('request');
 
 class WakandaApiKeyRegister {
 
-    register(wakandaInstanceData) {
+    registerApiKey(wakandaInstanceData) {
         let text = JSON.stringify(wakandaInstanceData);
 
         let json = CryptoJS.AES.encrypt(text, process.env.ENCRYPT_KEY, {
@@ -14,7 +14,7 @@ class WakandaApiKeyRegister {
         }).toString();
 
         let options = {
-            uri: 'http://localhost:4000/apikey',
+            uri: 'https://wakanda-statistic-receiver.herokuapp.com/apikey',
             method: 'POST',
             json: {
                 wakandaInstanceData : json

@@ -4,7 +4,7 @@ var redis = require('./RedisConnector');
 
 class WakandaProjectStorage {
 
-    save(wakandaInstanceData) {
+    saveProject(wakandaInstanceData) {
         redis.get(wakandaInstanceData.ownerEmail, function (error, data) {
             let arrayData = data ? JSON.parse(data) : [];
             arrayData.push(wakandaInstanceData);
