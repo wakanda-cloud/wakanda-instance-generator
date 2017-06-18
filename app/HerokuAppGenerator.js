@@ -22,12 +22,6 @@ class HerokuAppGenerator {
             },
             source_blob: {
                 url: "https://github.com/lucasventurasc/wakanda/tarball/master"
-            },
-            overrides: {
-                env : {
-                    DECRYPT_KEY: appOptions.decryptKey,
-                    SECURITY_TOKEN: appOptions.securityToken
-                }
             }
         };
 
