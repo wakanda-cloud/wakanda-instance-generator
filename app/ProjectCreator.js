@@ -1,9 +1,9 @@
 'use strict';
 
-let HerokuAppGenerator = require('./app/HerokuAppGenerator');
-let HerokuRedisConfigurator = require('./app/HerokuRedisConfigurator');
-let WakandaApiKeyRegister = require('./app/WakandaApiKeyRegister');
-let WakandaProjectStorage = require('./app/WakandaProjectStorage');
+let HerokuAppGenerator = require('./HerokuAppGenerator');
+let HerokuRedisConfigurator = require('./HerokuRedisConfigurator');
+let WakandaApiKeyRegister = require('./WakandaApiKeyRegister');
+let WakandaProjectStorage = require('./WakandaProjectStorage');
 
 class ProjectCreator {}
 

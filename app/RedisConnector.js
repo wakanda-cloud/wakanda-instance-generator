@@ -8,7 +8,7 @@ if (process.env.REDIS_URL) {
 }
 
 redisClient.on('connect', function() {
-    var environment = process.env.REDISCLOUD_URL ? 'production' : 'developer';
+    var environment = process.env.REDIS_URL ? 'production' : 'developer';
     console.log('Redis %s environment connected', environment);
 });
 
