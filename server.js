@@ -7,7 +7,7 @@ app.set('port', (process.env.PORT || 6000));
 app.listen(app.get('port'), function () {
 
     if(!process.env.ENCRYPT_KEY) {
-        process.env.ENCRYPT_KEY = "1234578";
+        process.env.ENCRYPT_KEY = "12345678";
         throw "Encrypt Key not configured";
     }
 
