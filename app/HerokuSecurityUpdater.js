@@ -16,7 +16,7 @@ class HerokuSecurityUpdater {
 
         var options = {
             url: 'https://api.heroku.com/apps/' + appName + '/config-vars',
-            method: 'POST',
+            method: 'PATCH',
             headers: headers,
             body: dataString
         };

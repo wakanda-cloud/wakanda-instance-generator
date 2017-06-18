@@ -3,6 +3,7 @@
 let HerokuAppGenerator = require('./HerokuAppGenerator');
 let HerokuRedisConfigurator = require('./HerokuRedisConfigurator');
 let WakandaApiKeyRegister = require('./WakandaApiKeyRegister');
+let HerokuSecurityUpdater = require('./HerokuSecurityUpdater');
 let WakandaProjectStorage = require('./WakandaProjectStorage');
 
 class ProjectCreator {}
@@ -18,12 +19,13 @@ ProjectCreator.createProject = function (wakandaInstanceData) {
     });
 };
 
-ProjectCreator.proceedProjectCreation = function (appName, url, wakandaInstanceData) {
+ProjectCreator.proceedProjectCreation = function (appName, url, wakandaData) {
+    new HerokuSecurityUpdater().configureSecurity(wakandaData.decryptKey, wakandaData.securityToken, appName);
     new HerokuRedisConfigurator().configureRedis(appName);
 
-    wakandaInstanceData.url = url;
-    new WakandaProjectStorage().saveProject(wakandaInstanceData);
-    new WakandaApiKeyRegister().registerApiKey(wakandaInstanceData);
+    wakandaData.url = url;
+    new WakandaProjectStorage().saveProject(wakandaData);
+    new WakandaApiKeyRegister().registerApiKey(wakandaData);
 };
 
 module.exports = ProjectCreator;
