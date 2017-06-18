@@ -35,8 +35,8 @@ routes.generate = function(req, res) {
         decryptKey: req.body.decryptKey,
         securityToken: req.body.securityToken,
         zipcode: req.body.zipcode,
-        country: req.country,
-        city: req.city
+        country: req.body.country,
+        city: req.body.city
 
     };
     console.log(JSON.stringify(wakandaInstanceData));
