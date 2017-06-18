@@ -1,24 +1,26 @@
 'use strict';
 
-var routes = function(){};
-var crypto = require('crypto');
-var timers = require('timers');
+let routes = function(){};
+let crypto = require('crypto');
+let timers = require('timers');
 
-var HerokuAppGenerator = require('./app/HerokuAppGenerator');
-var HerokuSecurityUpdater = require('./app/HerokuSecurityUpdater');
-var HerokuRedisConfigurator = require('./app/HerokuRedisConfigurator');
-var WakandaProjectStorage = require('./app/WakandaProjectStorage');
+let HerokuAppGenerator = require('./app/HerokuAppGenerator');
+let HerokuSecurityUpdater = require('./app/HerokuSecurityUpdater');
+let HerokuRedisConfigurator = require('./app/HerokuRedisConfigurator');
+let WakandaProjectStorage = require('./app/WakandaProjectStorage');
+let WakandaApiKeyRegister = require('./app/WakandaApiKeyRegister');
 
 routes.projects = function (req ,res) {
     let wakandaProjectStorage = new WakandaProjectStorage();
     wakandaProjectStorage.fetchProjects(req.query.email, function(projects) {
-        if(!projects || projects.length == 0) {
+        if(!projects || projects.length === 0) {
             res.status(204).send();
         } else {
             res.status(200).send(projects);
         }
     });
 };
+
 
 routes.generate = function(req, res) {
     if(!req.body.name) {
@@ -29,7 +31,6 @@ routes.generate = function(req, res) {
     if(!process.env.herokuauth) {
         res.status(500).send("Auth not configured for this server");
         throw "Heroku Auth (key:herokuauth) not configured for this server";
-        return;
     }
 
     let wakandaInstanceData = {
@@ -45,42 +46,30 @@ routes.generate = function(req, res) {
 
     console.log(JSON.stringify(wakandaInstanceData));
 
-    wakandaInstanceData.name = wakandaInstanceData.company.replace(' ', '').trim().toLowerCase() + "-" +
-                               wakandaInstanceData.name.replace(' ', '').trim().toLowerCase();
-    wakandaInstanceData.name = wakandaInstanceData.name.replace(/[^a-zA-Z0-9]/g, '');
-
     new HerokuAppGenerator().generate({
+        company: wakandaInstanceData.company,
         appName : wakandaInstanceData.name,
         decryptKey: wakandaInstanceData.decryptKey,
         securityToken: wakandaInstanceData.securityToken
+    }, function(url) {
+        let loop = setInterval(function () {
+            let whenAppCreated = function () {
+                new HerokuRedisConfigurator().configureRedis(wakandaInstanceData.name);
+                clearInterval(loop);
+            };
+
+            let whenErrorHappens = function () {
+                clearInterval(loop);
+            };
+
+            new HerokuAppGenerator().verifyAppCreated(wakandaInstanceData.name, whenAppCreated, whenErrorHappens);
+        }, 1000);
+
+        new WakandaProjectStorage().save(wakandaInstanceData);
+        new WakandaApiKeyRegister().register(wakandaInstanceData);
     });
 
-    var loop = setInterval(function() {
-        let whenAppCreated = function() {
-            new HerokuRedisConfigurator().configureRedis(wakandaInstanceData.name);
-            clearInterval(loop);
-        };
-
-        let whenErrorHappens = function() {
-            clearInterval(loop);
-        }
-
-        new HerokuAppGenerator().verifyAppCreated(wakandaInstanceData.name, whenAppCreated, whenErrorHappens);
-    }, 1000);
-
-    new WakandaProjectStorage().save(wakandaInstanceData);
     res.status(200).send();
 };
-
-function getJsonData(data, res) {
-    if(process.env.SECURITY_TOKEN) {
-        var jsonData = securityService.decryptJSON(data);
-        if(jsonData.token !== process.env.SECURITY_TOKEN) {
-            res.status(401).send("Unauthorized");
-        }
-        return jsonData;
-    }
-    return JSON.parse(data);
-}
 
 module.exports = routes;
