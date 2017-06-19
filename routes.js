@@ -19,7 +19,9 @@ routes.deleteProject = function (req, res) {
 
     new WakandaAuthenticator().authenticate(email, token, function() {
         let wakandaProjectStorage = new WakandaProjectStorage();
+        console.log('trying find ' + apiKey + " from email " + email);
         wakandaProjectStorage.findProjectByApiKey(email, apiKey, function(project) {
+            console.log('Project: ' + project);
             let appName = wakandaProjectStorage.getAppName(project);
             new WakandaProjectStorage().deleteProject(email, appName);
             new WakandaApiKeyRegister().unregisterApp(apiKey);
