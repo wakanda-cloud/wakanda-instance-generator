@@ -6,6 +6,27 @@ let WakandaProjectStorage = require('./app/WakandaProjectStorage');
 let HerokuAppGenerator = require('./app/HerokuAppGenerator');
 let ProjectCreator = require('./app/ProjectCreator');
 let WakandaAuthenticator = require('./app/WakandaAuthenticator');
+let WakandaApiKeyRegister = require('./app/WakandaApiKeyRegister');
+
+routes.deleteProject = function (req, res) {
+    var onError = function(status) {
+        res.status(status).send();
+    };
+
+    let email = req.query.email;
+    let apiKey = req.query.apiKey;
+    let token = req.query.token;
+
+    new WakandaAuthenticator().authenticate(email, token, function() {
+        let wakandaProjectStorage = new WakandaProjectStorage();
+        wakandaProjectStorage.findProjectByApiKey(email, apiKey, function(project) {
+            let appName = wakandaProjectStorage.getAppName(project);
+            new WakandaProjectStorage().deleteProject(email, appName);
+            new WakandaApiKeyRegister().unregisterApp(apiKey);
+            new HerokuAppGenerator().delete(appName);
+        });
+    }, onError);
+};
 
 routes.projects = function (req ,res) {
     var onError = function(status) {
@@ -40,8 +61,6 @@ routes.goGenerate = function (req, res) {
     console.log(JSON.stringify(wakandaInstanceData));
 
     ProjectCreator.createProject(wakandaInstanceData);
-
-    res.status(202).send();
 };
 
 routes.generate = function(req, res) {
@@ -62,6 +81,8 @@ routes.generate = function(req, res) {
     new WakandaAuthenticator().authenticate(req.body.ownerEmail, req.body.token, function() {
         routes.goGenerate(req, res);
     }, onError);
+
+    res.status(202).send();
 };
 
 module.exports = routes;

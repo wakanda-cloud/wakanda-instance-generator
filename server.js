@@ -27,3 +27,4 @@ app.use(cors());
 app.use(bodyparser.json());
 app.post('/generate', routes.generate);
 app.get('/projects', routes.projects);
+app.delete('/projects', routes.deleteProject);

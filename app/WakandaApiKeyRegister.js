@@ -26,6 +26,20 @@ class WakandaApiKeyRegister {
             console.log(response.statusCode);
         });
     }
+
+    unregisterApp(apiKey) {
+        let options = {
+            uri: 'https://wakanda-statistic-receiver.herokuapp.com/apikey',
+            method: 'DELETE',
+            json: {
+                apiKey : apiKey
+            }
+        };
+
+        request(options, function (error, response, body) {
+            console.log("Delete API Register response:" + response.statusCode);
+        });
+    }
 }
 
 module.exports = WakandaApiKeyRegister;

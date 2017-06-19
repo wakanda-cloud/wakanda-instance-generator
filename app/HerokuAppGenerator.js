@@ -11,6 +11,21 @@ class HerokuAppGenerator {
         }
     }
 
+    delete(appName) {
+        var options = {
+            url: 'https://api.heroku.com/apps/' + appName,
+            method: 'DELETE',
+            headers: this.headers,
+            body: JSON.stringify(data)
+        };
+
+        function callback(error, response, body) {
+            console.log("Delete response for app: " + appName + " -> " + response.statusCode);
+        }
+
+        request(options, callback);
+    }
+
     generate(appOptions, onSuccess) {
         let appName = appOptions.company.replace(' ', '').replace(/[^a-zA-Z0-9]/g, '').trim().toLowerCase();
         appName = appName + "-";
