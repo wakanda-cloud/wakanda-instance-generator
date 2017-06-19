@@ -19,7 +19,7 @@ class WakandaProjectStorage {
     }
 
     findProjectByApiKey(email, apiKey, onDone) {
-        redis.get(wakandaInstanceData.ownerEmail, function (error, data) {
+        redis.get(email, function (error, data) {
             let arrayData = data ? JSON.parse(data) : [];
             arrayData.forEach(function (element, index) {
                 if(element.apiKey === apiKey) {
