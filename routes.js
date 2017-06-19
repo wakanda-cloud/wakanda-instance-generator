@@ -5,29 +5,26 @@ let routes = function(){};
 let WakandaProjectStorage = require('./app/WakandaProjectStorage');
 let HerokuAppGenerator = require('./app/HerokuAppGenerator');
 let ProjectCreator = require('./app/ProjectCreator');
+let WakandaAuthenticator = require('./app/WakandaAuthenticator');
 
 routes.projects = function (req ,res) {
-    let wakandaProjectStorage = new WakandaProjectStorage();
-    wakandaProjectStorage.fetchProjects(req.query.email, function(projects) {
-        if(!projects || projects.length === 0) {
-            res.status(204).send();
-        } else {
-            res.status(200).send(projects);
-        }
-    });
+    var onError = function(status) {
+        res.status(status).send();
+    };
+
+    new WakandaAuthenticator().authenticate(req.query.email, req.query.token, function() {
+        let wakandaProjectStorage = new WakandaProjectStorage();
+        wakandaProjectStorage.fetchProjects(req.query.email, function(projects) {
+            if(!projects || projects.length === 0) {
+                res.status(204).send();
+            } else {
+                res.status(200).send(projects);
+            }
+        });
+    }, onError);
 };
 
-routes.generate = function(req, res) {
-    if(!req.body.name) {
-        res.status(400).send("App name is necessary");
-        return;
-    }
-    process.env.herokuauth = 'Bearer 407b8340-103b-4cfb-b3d3-825938c8cb99';
-    if(!process.env.herokuauth) {
-        res.status(500).send("Auth not configured for this server");
-        throw "Heroku Auth (key:herokuauth) not configured for this server";
-    }
-
+routes.goGenerate = function (req, res) {
     let wakandaInstanceData = {
         ownerEmail: req.body.ownerEmail,
         company: req.body.company,
@@ -45,6 +42,25 @@ routes.generate = function(req, res) {
     ProjectCreator.createProject(wakandaInstanceData);
 
     res.status(202).send();
+};
+routes.generate = function(req, res) {
+    if(!req.body.name) {
+        res.status(400).send("App name is necessary");
+        return;
+    }
+    process.env.herokuauth = 'Bearer 407b8340-103b-4cfb-b3d3-825938c8cb99';
+    if(!process.env.herokuauth) {
+        res.status(500).send("Auth not configured for this server");
+        throw "Heroku Auth (key:herokuauth) not configured for this server";
+    }
+
+    var onError = function(status) {
+        res.status(status).send();
+    };
+
+    new WakandaAuthenticator(req.body.ownerEmail, req.body.token, function() {
+        this.goGenerate(req, res);
+    }, onError);
 };
 
 routes.createProject = function (req) {
