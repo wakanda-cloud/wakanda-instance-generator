@@ -43,6 +43,7 @@ routes.goGenerate = function (req, res) {
 
     res.status(202).send();
 };
+
 routes.generate = function(req, res) {
     if(!req.body.name) {
         res.status(400).send("App name is necessary");
@@ -59,12 +60,8 @@ routes.generate = function(req, res) {
     };
 
     new WakandaAuthenticator().authenticate(req.body.ownerEmail, req.body.token, function() {
-        this.goGenerate(req, res);
+        routes.goGenerate(req, res);
     }, onError);
-};
-
-routes.createProject = function (req) {
-
 };
 
 module.exports = routes;
