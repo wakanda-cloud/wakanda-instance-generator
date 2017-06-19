@@ -8,7 +8,7 @@ class WakandaAuthenticator {
 
         var options = {
             method: 'GET',
-            url: 'https://wakanda-security.herokuapp.com/verifyToken?email' + email + "&" + token
+            url: 'https://wakanda-security.herokuapp.com/verifyToken?email=' + email + "&token=" + token
         };
 
         request(options, function (error, response, body) {
