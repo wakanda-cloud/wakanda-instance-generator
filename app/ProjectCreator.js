@@ -21,7 +21,9 @@ ProjectCreator.createProject = function (wakandaInstanceData) {
 };
 
 ProjectCreator.proceedProjectCreation = function (appName, url, wakandaData) {
-    new HerokuSecurityUpdater().configureSecurity(wakandaData.decryptKey, wakandaData.securityToken, appName);
+    wakandaData.decryptKey = ProjectCreator._randomAsciiString(8);
+
+    new HerokuSecurityUpdater().configureSecurity(wakandaData.decryptKey, appName);
     new HerokuRedisConfigurator().configureRedis(appName);
 
     wakandaData.url = url;
@@ -31,8 +33,38 @@ ProjectCreator.proceedProjectCreation = function (appName, url, wakandaData) {
     new WakandaApiKeyRegister().registerApiKey(wakandaData);
 };
 
+ProjectCreator._randomAsciiString = function(length) {
+    return ProjectCreator._randomString(length,'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789');
+}
+
+ProjectCreator._randomString = function(length, chars) {
+    if (!chars) {
+        throw new Error('Argument \'chars\' is undefined');
+    }
+
+    var charsLength = chars.length;
+    if (charsLength > 256) {
+        throw new Error('Argument \'chars\' should not have more than 256 characters'
+            + ', otherwise unpredictability will be broken');
+    }
+
+    var randomBytes = crypto.randomBytes(length);
+    var result = new Array(length);
+
+    var cursor = 0;
+    for (var i = 0; i < length; i++) {
+        cursor += randomBytes[i];
+        result[i] = chars[cursor % charsLength];
+    }
+
+    return result.join('');
+}
+
+
 ProjectCreator._createApiKey = function (wakandaData) {
     return crypto.createHash('md5').update(JSON.stringify(wakandaData.name)).digest('hex');
 };
+
+
 
 module.exports = ProjectCreator;

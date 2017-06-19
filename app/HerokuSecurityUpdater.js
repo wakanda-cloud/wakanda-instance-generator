@@ -4,7 +4,7 @@ var request = require('request');
 
 class HerokuSecurityUpdater {
 
-    configureSecurity(decryptKey, securityToken, appName) {
+    configureSecurity(decryptKey, appName) {
 
         var headers = {
             'Content-Type': 'application/json',
@@ -12,7 +12,7 @@ class HerokuSecurityUpdater {
             'Authorization': process.env.herokuauth
         };
 
-        var dataString = '{ \"DECRYPT_KEY\":\"' + decryptKey + '\", \"SECURITY_TOKEN\": \"' + securityToken + '\" }';
+        var dataString = '{ \"DECRYPT_KEY\":\"' + decryptKey + '\" }';
 
         var options = {
             url: 'https://api.heroku.com/apps/' + appName + '/config-vars',
