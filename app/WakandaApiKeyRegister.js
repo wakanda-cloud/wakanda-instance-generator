@@ -28,12 +28,16 @@ class WakandaApiKeyRegister {
     }
 
     unregisterApp(apiKey) {
-        let options = {
-            uri: 'https://wakanda-statistic-receiver.herokuapp.com/apikey?apikey=' +apiKey,
-            method: 'DELETE'
-        };
+        var request = require("request");
+
+        var options = {
+            method: 'DELETE',
+            url: 'http://wakanda-statistic-receiver.herokuapp.com/apikey',
+            qs: {apiKey: apiKey}
+        }
 
         request(options, function (error, response, body) {
+            if (error) throw new Error(error);
             console.log("Delete API Register response:" + response.statusCode);
         });
     }
