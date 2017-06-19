@@ -33,13 +33,14 @@ class WakandaProjectStorage {
     }
 
     deleteProject(email, appName) {
+        var context = this;
         redis.get(email, function (error, data) {
             let arrayData = data ? JSON.parse(data) : [];
             let newArrayData = [];
 
             arrayData.forEach(function(element, index) {
-                let appNameFound = this.getAppName(element);
-                if(appNameFound !== appName) {
+                let appNameFound = context.getAppName(element);
+                if(appNameFound === appName) {
                     newArrayData.push(element);
                 }
             });

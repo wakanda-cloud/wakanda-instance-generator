@@ -26,6 +26,8 @@ routes.deleteProject = function (req, res) {
             new HerokuAppGenerator().delete(appName);
         });
     }, onError);
+
+    res.status(202).send();
 };
 
 routes.projects = function (req ,res) {
