@@ -5,6 +5,7 @@ let HerokuRedisConfigurator = require('./HerokuRedisConfigurator');
 let WakandaApiKeyRegister = require('./WakandaApiKeyRegister');
 let HerokuSecurityUpdater = require('./HerokuSecurityUpdater');
 let WakandaProjectStorage = require('./WakandaProjectStorage');
+let crypto = require('crypto');
 
 class ProjectCreator {}
 
@@ -24,8 +25,14 @@ ProjectCreator.proceedProjectCreation = function (appName, url, wakandaData) {
     new HerokuRedisConfigurator().configureRedis(appName);
 
     wakandaData.url = url;
+    wakandaData.apiKey = ProjectCreator._createApiKey(wakandaData);
+
     new WakandaProjectStorage().saveProject(wakandaData);
     new WakandaApiKeyRegister().registerApiKey(wakandaData);
+};
+
+ProjectCreator._createApiKey = function (wakandaData) {
+    return crypto.createHash('md5').update(JSON.stringify(wakandaData.name)).digest('hex');
 };
 
 module.exports = ProjectCreator;
