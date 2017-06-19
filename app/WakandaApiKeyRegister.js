@@ -28,8 +28,6 @@ class WakandaApiKeyRegister {
     }
 
     unregisterApp(apiKey) {
-        var request = require("request");
-
         var options = {
             method: 'DELETE',
             url: 'http://wakanda-statistic-receiver.herokuapp.com/apikey',
