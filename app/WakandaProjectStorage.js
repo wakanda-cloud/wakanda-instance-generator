@@ -24,11 +24,8 @@ class WakandaProjectStorage {
             arrayData.forEach(function (element, index) {
                 if(element.apiKey === apiKey) {
                     onDone.call(this, element);
-                    return;
                 }
             });
-
-            onDone.call(this, null);
         });
     }
 
