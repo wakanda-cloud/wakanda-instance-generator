@@ -70,7 +70,6 @@ routes.generate = function(req, res) {
         res.status(400).send("App name is necessary");
         return;
     }
-    process.env.herokuauth = 'Bearer 407b8340-103b-4cfb-b3d3-825938c8cb99';
     if(!process.env.herokuauth) {
         res.status(500).send("Auth not configured for this server");
         throw "Heroku Auth (key:herokuauth) not configured for this server";

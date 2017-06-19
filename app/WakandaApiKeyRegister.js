@@ -29,11 +29,8 @@ class WakandaApiKeyRegister {
 
     unregisterApp(apiKey) {
         let options = {
-            uri: 'https://wakanda-statistic-receiver.herokuapp.com/apikey',
-            method: 'DELETE',
-            json: {
-                apiKey : apiKey
-            }
+            uri: 'https://wakanda-statistic-receiver.herokuapp.com/apikey?apikey=' +apiKey,
+            method: 'DELETE'
         };
 
         request(options, function (error, response, body) {

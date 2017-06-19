@@ -40,17 +40,17 @@ class WakandaProjectStorage {
 
             arrayData.forEach(function(element, index) {
                 let appNameFound = context.getAppName(element);
-                if(appNameFound === appName) {
+                if(appNameFound !== appName) {
                     newArrayData.push(element);
                 }
             });
 
-            redis.set(email, JSON.stringify(arrayData));
+            redis.set(email, JSON.stringify(newArrayData));
         })
     }
 
     getAppName(wakandaInstanceData) {
-        return wakandaInstanceData.url.substr(8, wakandaInstanceData.url.indexOf(".herokuapp.com"));
+        return wakandaInstanceData.url.split("\.herokuapp\.com")[0].replace("https://", "");
     }
 }
 
