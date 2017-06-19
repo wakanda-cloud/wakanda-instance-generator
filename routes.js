@@ -10,7 +10,7 @@ let WakandaApiKeyRegister = require('./app/WakandaApiKeyRegister');
 
 routes.deleteProject = function (req, res) {
     var onError = function(status) {
-        res.status(status).send();
+        res.status(status).send("Authentication error");
     };
 
     let email = req.query.email;
