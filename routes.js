@@ -58,7 +58,7 @@ routes.generate = function(req, res) {
         res.status(status).send();
     };
 
-    new WakandaAuthenticator(req.body.ownerEmail, req.body.token, function() {
+    new WakandaAuthenticator().authenticate(req.body.ownerEmail, req.body.token, function() {
         this.goGenerate(req, res);
     }, onError);
 };
