@@ -2,9 +2,9 @@
 
 var request = require('request');
 
-class HerokuRedisConfigurator {
+class HerokuDatabaseConfigurator {
 
-    configureRedis(appName) {
+    configureMongo(appName) {
 
         var headers = {
             'Content-Type': 'application/json',
@@ -12,7 +12,7 @@ class HerokuRedisConfigurator {
             'Authorization': process.env.herokuauth
         };
 
-        var dataString = '{  \"plan\": \"heroku-redis:hobby-dev\" }';
+        var dataString = '{  \"plan\": \"mongolab:sandbox\" }';
 
         var options = {
             url: 'https://api.heroku.com/apps/' + appName + '/addons',
@@ -23,13 +23,13 @@ class HerokuRedisConfigurator {
 
         function callback(error, response, body) {
             if (!error && response.statusCode >= 200 && response.statusCode <= 206) {
-                console.log("Redis configurated for app " +appName);
+                console.log("Mongodb configurated for app " +appName);
             } else {
-                console.log("Error on config redis: status: " + response.statusCode + " : " + body);
+                console.log("Error on config mongo: status: " + response.statusCode + " : " + body);
             }
         }
 
         request(options, callback);
     }
 }
-module.exports = HerokuRedisConfigurator;
+module.exports = HerokuDatabaseConfigurator;

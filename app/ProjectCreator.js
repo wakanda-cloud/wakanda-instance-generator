@@ -24,7 +24,7 @@ ProjectCreator.proceedProjectCreation = function (appName, url, wakandaData) {
     wakandaData.decryptKey = ProjectCreator._randomAsciiString(8);
 
     new HerokuSecurityUpdater().configureSecurity(wakandaData.decryptKey, appName);
-    new HerokuRedisConfigurator().configureRedis(appName);
+    new HerokuRedisConfigurator().configureMongo(appName);
 
     wakandaData.url = url;
     wakandaData.apiKey = ProjectCreator._createApiKey(wakandaData);
