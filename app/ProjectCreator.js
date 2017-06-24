@@ -1,7 +1,7 @@
 'use strict';
 
 let HerokuAppGenerator = require('./HerokuAppGenerator');
-let HerokuRedisConfigurator = require('./HerokuRedisConfigurator');
+let HerokuDatabaseConfigurator = require('./HerokuDatabaseConfigurator');
 let WakandaApiKeyRegister = require('./WakandaApiKeyRegister');
 let HerokuSecurityUpdater = require('./HerokuSecurityUpdater');
 let WakandaProjectStorage = require('./WakandaProjectStorage');
@@ -24,7 +24,7 @@ ProjectCreator.proceedProjectCreation = function (appName, url, wakandaData) {
     wakandaData.decryptKey = ProjectCreator._randomAsciiString(8);
 
     new HerokuSecurityUpdater().configureSecurity(wakandaData.decryptKey, appName);
-    new HerokuRedisConfigurator().configureMongo(appName);
+    new HerokuDatabaseConfigurator().configureMongo(appName);
 
     wakandaData.url = url;
     wakandaData.apiKey = ProjectCreator._createApiKey(wakandaData);
