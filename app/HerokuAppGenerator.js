@@ -37,7 +37,7 @@ class HerokuAppGenerator {
                 name: appName
             },
             source_blob: {
-                url: "https://github.com/lucasventurasc/wakanda/tarball/beta-mongo"
+                url: "https://github.com/wakanda-cloud/wakanda/tarball/beta-mongo"
             }
         };
 
