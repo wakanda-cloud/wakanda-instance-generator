@@ -4,7 +4,6 @@ var request = require('request');
 class HerokuAppGenerator {
 
     constructor() {
-        process.env.herokuauth = 'Bearer 407b8340-103b-4cfb-b3d3-825938c8cb99';
         this.headers = {
             'Content-Type': 'application/json',
             'Accept': 'application/vnd.heroku+json; version=3',
