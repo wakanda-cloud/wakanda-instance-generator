@@ -35,7 +35,7 @@ routes.projects = function (req ,res) {
         res.status(status).send();
     };
 
-    //new WakandaAuthenticator().authenticate(req.query.email, req.query.token, function() {
+    new WakandaAuthenticator().authenticate(req.query.email, req.query.token, function() {
         let wakandaProjectStorage = new WakandaProjectStorage();
         wakandaProjectStorage.fetchProjects(req.query.email, function(projects) {
             if(!projects || projects.length === 0) {
@@ -44,7 +44,7 @@ routes.projects = function (req ,res) {
                 res.status(200).send(projects);
             }
         });
-    //}, onError);
+    }, onError);
 };
 
 routes.goGenerate = function (req, res) {
