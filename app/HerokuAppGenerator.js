@@ -1,5 +1,6 @@
 'use strict';
 var request = require('request');
+var AppNameGenerator = require('./utils/AppNameGenerator');
 
 class HerokuAppGenerator {
 
@@ -27,10 +28,7 @@ class HerokuAppGenerator {
     }
 
     generate(appOptions, onSuccess) {
-        let appName = appOptions.company.replace(' ', '').replace(/[^a-zA-Z0-9]/g, '').trim().toLowerCase();
-        appName = appName + "-";
-        appName = appName + appOptions.name.replace(' ', '').replace(/[^a-zA-Z0-9]/g, '').trim().toLowerCase();
-
+        let appName = AppNameGenerator.buildAppName(appOptions.company, appOptions.name);
         let data = {
             app : {
                 name: appName
@@ -40,7 +38,7 @@ class HerokuAppGenerator {
             }
         };
 
-        var options = {
+        let options = {
             url: 'https://api.heroku.com/app-setups',
             method: 'POST',
             headers: this.headers,
@@ -49,7 +47,7 @@ class HerokuAppGenerator {
 
         function callback(error, response, body) {
             if (!error && response.statusCode >= 200 && response.statusCode <= 206) {
-                onSuccess.call(this, appName, "https://" + appName + ".herokuapp.com");
+                onSuccess.call(this, appName, AppNameGenerator.buildAppUrl(appName));
                 console.log("Created app " + appName);
             } else {
                 console.log('Status error received: ' + response.statusCode + " because : " + body);
