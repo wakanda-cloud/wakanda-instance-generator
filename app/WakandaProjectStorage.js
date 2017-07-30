@@ -18,7 +18,7 @@ class WakandaProjectStorage {
         let generateTokenSearchAPI = function (project) {
             let filter = JSON.stringify({client: "*"});
             let token = CryptoJS.AES.encrypt(filter, project.decryptKey, {mode: CryptoJS.mode.CTR}).toString();
-            token = token.replace("+", "%2B");
+            token = token.split("+").join("%2B");
             return token;
         };
 
