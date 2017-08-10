@@ -34,7 +34,7 @@ class HerokuAppGenerator {
                 name: appName
             },
             source_blob: {
-                url: "https://github.com/wakanda-cloud/wakanda/tarball/beta-mongo"
+                url: "https://github.com/wakanda-cloud/wakanda/tarball/v2.0"
             }
         };
 
@@ -47,8 +47,8 @@ class HerokuAppGenerator {
 
         function callback(error, response, body) {
             if (!error && response.statusCode >= 200 && response.statusCode <= 206) {
+                console.log("Created app " + appName + " status received: " + response.statusCode);
                 onSuccess.call(this, appName, AppNameGenerator.buildAppUrl(appName));
-                console.log("Created app " + appName);
             } else {
                 console.log('Status error received: ' + response.statusCode + " because : " + body);
             }
