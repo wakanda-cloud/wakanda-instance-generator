@@ -2,9 +2,9 @@
 
 var redis = require('./RedisConnector');
 var CryptoJS = require('crypto-js');
-var AppNameGenerator = require('./utils/AppNameGenerator');
+var AppNameGenerator = require('../project/AppNameGenerator');
 
-class WakandaProjectStorage {
+class WakandaProjectStorage extends ProjectRepository {
 
     saveProject(wakandaInstanceData) {
         redis.get(wakandaInstanceData.ownerEmail, function (error, data) {
@@ -55,7 +55,7 @@ class WakandaProjectStorage {
             let newArrayData = [];
 
             arrayData.forEach(function(element, index) {
-                let appNameFound = context.getAppName(element);
+                let appNameFound = context._getAppName(element);
                 if(appNameFound !== appName) {
                     newArrayData.push(element);
                 }
@@ -65,9 +65,9 @@ class WakandaProjectStorage {
         })
     }
 
-    getAppName(wakandaInstanceData) {
-        return wakandaInstanceData.url.split("\.herokuapp\.com")[0].replace("https://", "");
+    _getAppName(wakandaInstanceData) {
+        return AppNameGenerator.extractAppNameFromUrl(wakandaInstanceData.url);
     }
 }
 
-module.exports = WakandaProjectStorage;
+module.exports = new WakandaProjectStorage();

@@ -2,11 +2,13 @@
 
 let routes = function(){};
 
-let WakandaProjectStorage = require('./app/WakandaProjectStorage');
-let HerokuAppGenerator = require('./app/HerokuAppGenerator');
-let ProjectCreator = require('./app/ProjectCreator');
+let wakandaProjectStorage = require('./app/repository/WakandaProjectStorage');
+let requestSender = require('./app/RequestSender');
+
+let HerokuAppGenerator = require('./app/heroku/HerokuAppGenerator');
+let ProjectCreator = require('./app/project/ProjectCreator');
 let WakandaAuthenticator = require('./app/WakandaAuthenticator');
-let WakandaApiKeyRegister = require('./app/WakandaApiKeyRegister');
+let ProjectRemover = require('./app/project/ProjectRemover');
 
 routes.deleteProject = function (req, res) {
     var onError = function(status) {
@@ -18,13 +20,8 @@ routes.deleteProject = function (req, res) {
     let token = req.query.token;
 
     new WakandaAuthenticator().authenticate(email, token, function() {
-        let wakandaProjectStorage = new WakandaProjectStorage();
-        wakandaProjectStorage.findProjectByApiKey(email, apiKey, function(project) {
-            let appName = wakandaProjectStorage.getAppName(project);
-            new WakandaProjectStorage().deleteProject(email, appName);
-            new WakandaApiKeyRegister().unregisterApp(apiKey);
-            new HerokuAppGenerator().delete(appName);
-        });
+        let projectRemover = new ProjectRemover(requestSender, wakandaProjectStorage);
+        projectRemover.removeProject(email, apiKey);
     }, onError);
 
     res.status(202).send();
@@ -36,7 +33,6 @@ routes.projects = function (req ,res) {
     };
 
     new WakandaAuthenticator().authenticate(req.query.email, req.query.token, function() {
-        let wakandaProjectStorage = new WakandaProjectStorage();
         wakandaProjectStorage.fetchProjects(req.query.email, function(projects) {
             if(!projects || projects.length === 0) {
                 res.status(204).send();
@@ -62,7 +58,9 @@ routes.goGenerate = function (req, res) {
     };
     console.log(JSON.stringify(wakandaInstanceData));
 
-    ProjectCreator.createProject(wakandaInstanceData);
+    let herokuRequestSender = new HerokuRequestSender(req.herokuauth, requestSender);
+    let projectCreator = new ProjectCreator(herokuRequestSender, wakandaProjectStorage);
+    projectCreator.createProject(wakandaInstanceData);
 };
 
 routes.generate = function(req, res) {
@@ -70,10 +68,10 @@ routes.generate = function(req, res) {
         res.status(400).send("App name is necessary");
         return;
     }
-    if(!process.env.herokuauth) {
-        res.status(500).send("Auth not configured for this server");
-        throw "Heroku Auth (key:herokuauth) not configured for this server";
-    }
+    //if(!process.env.herokuauth) {
+        //res.status(500).send("Auth not configured for this server");
+        //throw "Heroku Auth (key:herokuauth) not configured for this server";
+    //}
 
     var onError = function(status) {
         res.status(status).send();

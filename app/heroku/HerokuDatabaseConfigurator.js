@@ -4,20 +4,17 @@ var request = require('request');
 
 class HerokuDatabaseConfigurator {
 
-    configureMongo(appName) {
+    constructor(requestSender) {
+        this._requestSender = requestSender;
+    }
 
-        var headers = {
-            'Content-Type': 'application/json',
-            'Accept': 'application/vnd.heroku+json; version=3',
-            'Authorization': process.env.herokuauth
-        };
+    configureMongo(appName) {
 
         var dataString = '{  \"plan\": \"mongolab:sandbox\" }';
 
         var options = {
             url: 'https://api.heroku.com/apps/' + appName + '/addons',
             method: 'POST',
-            headers: headers,
             body: dataString
         };
 
@@ -29,7 +26,7 @@ class HerokuDatabaseConfigurator {
             }
         }
 
-        request(options, callback);
+        this._requestSender.request(options, callback);
     }
 }
 module.exports = HerokuDatabaseConfigurator;

@@ -1,30 +1,23 @@
 'use strict';
-var request = require('request');
-var AppNameGenerator = require('./utils/AppNameGenerator');
+var AppNameGenerator = require('../project/AppNameGenerator');
 
 class HerokuAppGenerator {
 
-    constructor() {
-        this.headers = {
-            'Content-Type': 'application/json',
-            'Accept': 'application/vnd.heroku+json; version=3',
-            'Authorization': process.env.herokuauth
-        }
+    constructor(requestSender) {
+        this._requestSender = requestSender;
     }
 
     delete(appName) {
         var options = {
             url: 'https://api.heroku.com/apps/' + appName,
             method: 'DELETE',
-            headers: this.headers
         };
-
 
         function callback(error, response, body) {
             console.log("Delete response for app: " + appName + " -> " + response.statusCode);
         }
 
-        request(options, callback);
+        this._requestSender.request(options, callback);
     }
 
     generate(appOptions, onSuccess) {
@@ -54,7 +47,7 @@ class HerokuAppGenerator {
             }
         }
 
-        request(options, callback);
+        this._requestSender.request(options, callback);
     }
 
     verifyAppCreated(name, callbackAppCreated, callbackError) {
@@ -63,7 +56,7 @@ class HerokuAppGenerator {
             method: 'GET',
             headers: this.headers
         };
-        request(options, function(error, response, body) {
+        this._requestSender.request(options, function(error, response, body) {
             if(response.statusCode === 200) {
                 callbackAppCreated.apply(this);
             } else {

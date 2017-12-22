@@ -1,10 +1,12 @@
 'use strict';
 
 var CryptoJS = require("crypto-js");
-var bytes = require('bytes');
-var request = require('request');
 
 class WakandaApiKeyRegister {
+
+    constructor(requestSender) {
+        this.requestSender = requestSender;
+    }
 
     registerApiKey(wakandaInstanceData) {
         let text = JSON.stringify(wakandaInstanceData);
@@ -14,14 +16,14 @@ class WakandaApiKeyRegister {
         }).toString();
 
         let options = {
-            uri: 'https://wakanda-statistic-receiver.herokuapp.com/apikey',
+            url: 'https://wakanda-statistic-receiver.herokuapp.com/apikey',
             method: 'POST',
             json: {
                 wakandaInstanceData : json
             }
         };
 
-        request(options, function (error, response, body) {
+        this.requestSender.request(options, function (error, response, body) {
             if(error) throw error;
             console.log(response.statusCode);
         });
@@ -32,9 +34,9 @@ class WakandaApiKeyRegister {
             method: 'DELETE',
             url: 'http://wakanda-statistic-receiver.herokuapp.com/apikey',
             qs: {apiKey: apiKey}
-        }
+        };
 
-        request(options, function (error, response, body) {
+        this.requestSender.request(options, function (error, response, body) {
             if (error) throw new Error(error);
             console.log("Delete API Register response:" + response.statusCode);
         });

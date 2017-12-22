@@ -3,3 +3,4 @@ config/
 *.log
 .idea/
 node_modules/
+coverage/
