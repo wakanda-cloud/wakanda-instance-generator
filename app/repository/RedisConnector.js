@@ -3,6 +3,7 @@ var redisClient = null;
 if (process.env.REDIS_URL) {
     redisClient = require('redis').createClient(process.env.REDIS_URL, {no_ready_check: true});
 } else if (process.env.REDIS_MEMORY) {
+    console.log('Entering into REDIS_MEMORY');
     redisClient = require('redis-js').toNodeRedis().createClient();
 } else {
     redisClient = require('redis').createClient();
