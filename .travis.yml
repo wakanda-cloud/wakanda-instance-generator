@@ -3,3 +3,5 @@ node_js:
   - "6"
 script:
   - npm run test-coverage
+env:
+  - REDIS_MEMORY=true ENCRYPT_KEY=12345678 TEST_ENVIRONMENT=true
