@@ -7,4 +7,6 @@ Responsible to generate Wakanda instances with security and database configurate
 # Developing
 
 ``` NPM TEST ``` to run tests
+
+
 ``` NPM RUN TEST-COVERAGE``` to run covarage
