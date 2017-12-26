@@ -24,7 +24,8 @@
     "mcrypt": "^0.1.12",
     "morgan": "~1.8.1",
     "redis": "^2.7.1",
-    "request": "^2.81.0"
+    "request": "^2.81.0",
+    "redis-js": "^0.1.2"
   },
   "devDependencies": {
     "codecov": "^3.0.0",

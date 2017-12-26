@@ -28,19 +28,21 @@ routes.deleteProject = function (req, res) {
 };
 
 routes.projects = function (req ,res) {
+    console.log("routes.js => Fetching projects");
     var onError = function(status) {
         res.status(status).send();
     };
 
-    new WakandaAuthenticator().authenticate(req.query.email, req.query.token, function() {
+    ///new WakandaAuthenticator().authenticate(req.query.email, req.query.token, function() {
         wakandaProjectStorage.fetchProjects(req.query.email, function(projects) {
+            console.log('Projects from ' + req.query.email + ' are fetched');
             if(!projects || projects.length === 0) {
                 res.status(204).send();
             } else {
                 res.status(200).send(projects);
             }
         });
-    }, onError);
+    //}, onError);
 };
 
 routes.goGenerate = function (req, res) {
@@ -53,8 +55,7 @@ routes.goGenerate = function (req, res) {
         zipcode: req.body.zipcode,
         country: req.body.country,
         city: req.body.city,
-        programmingLanguage: req.body.programmingLanguage,
-
+        programmingLanguage: req.body.programmingLanguage
     };
     console.log(JSON.stringify(wakandaInstanceData));
 

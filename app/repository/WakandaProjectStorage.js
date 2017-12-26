@@ -1,5 +1,7 @@
 'use strict';
 
+const ProjectRepository = require('./ProjectRepository');
+
 var redis = require('./RedisConnector');
 var CryptoJS = require('crypto-js');
 var AppNameGenerator = require('../project/AppNameGenerator');
@@ -28,6 +30,7 @@ class WakandaProjectStorage extends ProjectRepository {
             return AppNameGenerator.buildAppUrl(appName) + "/listStatistics?payload=" + token;
         };
 
+        console.log('Will read projects from email: ' + email);
         redis.get(email, function (error, projectsJsonStringified) {
             let projectsArray = JSON.parse(projectsJsonStringified);
             projectsArray.forEach(function(project) {
