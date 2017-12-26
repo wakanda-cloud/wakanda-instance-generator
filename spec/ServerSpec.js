@@ -8,7 +8,10 @@ var redisMemoryClient;
 describe('Project Creation', function () {
 
     beforeAll(function(done) {
-        process.env.REDIS_MEMORY = 1;
+        if (!process.env.REDIS_TRAVIS) {
+            process.env.REDIS_MEMORY = 1;
+        }
+
         process.env.TEST_ENVIRONMENT = 1;
         process.env.PORT = 6000;
         process.env.ENCRYPT_KEY = '12345678';
