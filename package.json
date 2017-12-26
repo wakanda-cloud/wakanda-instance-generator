@@ -28,7 +28,6 @@
   },
   "devDependencies": {
     "codecov": "^3.0.0",
-    "istanbul": "^0.4.5",
-    "nyc": "^11.4.1"
+    "istanbul": "^0.4.5"
   }
 }
