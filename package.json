@@ -8,6 +8,7 @@
   "scripts": {
     "start": "node server.js",
     "test": "jasmine JASMINE_CONFIG_PATH=jasmine.json",
+    "coverage": "istanbul cover --include-all-sources jasmine-node spec",
     "test-coverage": "istanbul cover --include-all-sources jasmine-node spec && codecov"
   },
   "dependencies": {
