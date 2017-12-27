@@ -34,6 +34,7 @@ class ProjectCreator {
     }
 
     proceedProjectCreation(appName, url, wakandaData) {
+        console.log('Proceding with project creation ' + url);
         wakandaData.decryptKey = RandomAsciiStringGenerator.randomAsciiString(8);
 
         new HerokuSecurityUpdater(this._requestSender).configureSecurity(wakandaData.decryptKey, appName);

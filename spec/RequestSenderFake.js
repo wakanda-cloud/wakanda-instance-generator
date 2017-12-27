@@ -7,6 +7,7 @@ class RequestSenderMock {
     request(options, callback) {
         this._options.push(options);
         if(this.response) {
+            console.log('Calling callback for ' + JSON.stringify(options));
             callback.apply(this, [null, this.response, null])
         }
         //callback.call();
@@ -20,10 +21,15 @@ class RequestSenderMock {
     }
 
     responseStatus(status) {
+        this._options = [];
         this.response = {
             statusCode : status
         };
         return this;
+    }
+
+    reset() {
+        this._options = [];
     }
 }
 

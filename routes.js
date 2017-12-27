@@ -1,14 +1,14 @@
 'use strict';
-
-let routes = function(){};
-
 let wakandaProjectStorage = require('./app/repository/WakandaProjectStorage');
-let requestSender = require('./app/RequestSender');
-
 let HerokuAppGenerator = require('./app/heroku/HerokuAppGenerator');
 let ProjectCreator = require('./app/project/ProjectCreator');
 let WakandaAuthenticator = require('./app/WakandaAuthenticator');
 let ProjectRemover = require('./app/project/ProjectRemover');
+
+let routes = function() {};
+routes.injectRequestSender = function(requestSender) {
+    routes.requestSender = requestSender;
+};
 
 routes.deleteProject = function (req, res) {
     var onError = function(status) {
@@ -19,9 +19,9 @@ routes.deleteProject = function (req, res) {
     let apiKey = req.query.apiKey;
     let token = req.query.token;
 
-    new WakandaAuthenticator().authenticate(email, token, function() {
-        let projectRemover = new ProjectRemover(requestSender, wakandaProjectStorage);
-        projectRemover.removeProject(email, apiKey);
+    new WakandaAuthenticator(routes.requestSender).authenticate(email, token, function() {
+        let projectRemover = new ProjectRemover(routes.requestSender, wakandaProjectStorage);
+        projectRemover.removeProject(email, apiKey, req.query.herokuauth);
     }, onError);
 
     res.status(202).send();
@@ -30,19 +30,20 @@ routes.deleteProject = function (req, res) {
 routes.projects = function (req ,res) {
     console.log("routes.js => Fetching projects");
     var onError = function(status) {
+        console.log('I got some status from email : ' +req.query.email+ ' status: ' + status);
         res.status(status).send();
     };
 
-    ///new WakandaAuthenticator().authenticate(req.query.email, req.query.token, function() {
+    console.log('I will see the email: ' + req.query.email)
+    new WakandaAuthenticator(routes.requestSender).authenticate(req.query.email, req.query.token, function() {
         wakandaProjectStorage.fetchProjects(req.query.email, function(projects) {
-            console.log('Projects from ' + req.query.email + ' are fetched');
             if(!projects || projects.length === 0) {
                 res.status(204).send();
             } else {
                 res.status(200).send(projects);
             }
         });
-    //}, onError);
+    }, onError);
 };
 
 routes.goGenerate = function (req, res) {
@@ -55,12 +56,12 @@ routes.goGenerate = function (req, res) {
         zipcode: req.body.zipcode,
         country: req.body.country,
         city: req.body.city,
-        programmingLanguage: req.body.programmingLanguage
+        programmingLanguage: req.body.programmingLanguage,
+        herokuauth: req.herokuauth
     };
     console.log(JSON.stringify(wakandaInstanceData));
 
-    let herokuRequestSender = new HerokuRequestSender(req.herokuauth, requestSender);
-    let projectCreator = new ProjectCreator(herokuRequestSender, wakandaProjectStorage);
+    let projectCreator = new ProjectCreator(routes.requestSender, wakandaProjectStorage);
     projectCreator.createProject(wakandaInstanceData);
 };
 
@@ -78,11 +79,10 @@ routes.generate = function(req, res) {
         res.status(status).send();
     };
 
-    new WakandaAuthenticator().authenticate(req.body.ownerEmail, req.body.token, function() {
+    new WakandaAuthenticator(routes.requestSender).authenticate(req.body.ownerEmail, req.body.token, function() {
+        res.status(202).send();
         routes.goGenerate(req, res);
     }, onError);
-
-    res.status(202).send();
 };
 
 module.exports = routes;

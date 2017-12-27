@@ -9,7 +9,7 @@ class HerokuDatabaseConfigurator {
     }
 
     configureMongo(appName) {
-
+        console.log('Configuring MongoDB for ' + appName);
         var dataString = '{  \"plan\": \"mongolab:sandbox\" }';
 
         var options = {

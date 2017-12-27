@@ -7,7 +7,7 @@ class HerokuSecurityUpdater {
     }
 
     configureSecurity(decryptKey, appName) {
-
+        console.log('Configuring security for ' + appName);
         var dataString = '{ \"DECRYPT_KEY\":\"' + decryptKey + '\" }';
 
         var options = {

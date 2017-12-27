@@ -12,11 +12,12 @@ class ProjectRemover {
     }
 
     removeProject(email, apiKey, herokuauth) {
+        console.log('Removing project ' + apiKey + ' from email ' + email + ' with herokuauth ' + herokuauth);
         var self = this;
         this.wakandaProjectStorage.findProjectByApiKey(email, apiKey, function(project) {
             let herokuAppGenerator = new HerokuAppGenerator(new HerokuRequestSender(herokuauth, self.requestSender));
             let wakandaApiKeyRegister = new WakandaApiKeyRegister(self.requestSender);
-            let appName = AppNameGenerator.extractAppNameFromUrl(project);
+            let appName = AppNameGenerator.extractAppNameFromUrl(project.url);
 
             self.wakandaProjectStorage.deleteProject(email, appName);
             wakandaApiKeyRegister.unregisterApp(apiKey);
@@ -24,3 +25,5 @@ class ProjectRemover {
         });
     }
 }
+
+module.exports = ProjectRemover;

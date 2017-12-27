@@ -2,14 +2,16 @@ process.on('uncaughtException', function (error) {
     console.log("uncaughtException :" + error);
 });
 
-function run(callback) {
+var routes = require('./routes');
+var RequestSender = require('./app/RequestSender');
+
+function run(callback, requestSenderService) {
     var express = require('express');
     var app = express();
     var bodyparser = require('body-parser');
 
     app.set('port', (process.env.PORT || 6000));
     var server = app.listen(app.get('port'), function () {
-
         if (!process.env.ENCRYPT_KEY) {
             process.env.ENCRYPT_KEY = "12345678";
             console.log("ERROR: WILL NOT WORK IF IS INTO PRODUCTION, ENCRYPT KEY NOT SET");
@@ -28,10 +30,11 @@ function run(callback) {
         console.log('Server closed');
     });
 
-    var routes = require('./routes');
     app.use(require('cors')());
 
     app.use(bodyparser.json());
+
+    routes.injectRequestSender(requestSenderService);
     app.post('/generate', routes.generate);
     app.get('/projects', routes.projects);
     app.delete('/projects', routes.deleteProject);
@@ -41,7 +44,9 @@ function run(callback) {
 
 if(!process.env.TEST_ENVIRONMENT) {
     console.log('Production Environment');
-    run();
+    run(null, new RequestSender());
+} else {
+    console.log('Test Environment');
 }
 
 exports.run = run;

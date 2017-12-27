@@ -1,6 +1,6 @@
 let ProjectCreator = require('../app/project/ProjectCreator');
 let HerokuRequestSender = require('../app/heroku/HerokuRequestSender');
-let RequestSenderMock = require('./RequestSenderMock');
+let RequestSenderMock = require('./RequestSenderFake');
 let ProjectRepositoryMock = require('./ProjectRepositoryMock');
 var CryptoJS = require("crypto-js");
 
