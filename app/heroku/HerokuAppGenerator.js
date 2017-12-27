@@ -50,19 +50,19 @@ class HerokuAppGenerator {
         this._requestSender.request(options, callback);
     }
 
-    verifyAppCreated(name, callbackAppCreated, callbackError) {
-        var options = {
-            url: 'https://api.heroku.com/apps/' + name,
-            method: 'GET',
-            headers: this.headers
-        };
-        this._requestSender.request(options, function(error, response, body) {
-            if(response.statusCode === 200) {
-                callbackAppCreated.apply(this);
-            } else {
-                callbackError.apply(this);
-            }
-        });
-    }
+    //verifyAppCreated(name, callbackAppCreated, callbackError) {
+    //    var options = {
+    //       url: 'https://api.heroku.com/apps/' + name,
+    //        method: 'GET',
+    //        headers: this.headers
+    //    };
+    //    this._requestSender.request(options, function(error, response, body) {
+    //        if(response.statusCode === 200) {
+    //            callbackAppCreated.apply(this);
+    //        } else {
+    //            callbackError.apply(this);
+    //        }
+    //    });
+    // }
 }
 module.exports = HerokuAppGenerator;
