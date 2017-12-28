@@ -34,7 +34,7 @@ routes.projects = function (req ,res) {
         res.status(status).send();
     };
 
-    console.log('I will see the email: ' + req.query.email)
+    console.log('I will see the email: ' + req.query.email);
     new WakandaAuthenticator(routes.requestSender).authenticate(req.query.email, req.query.token, function() {
         wakandaProjectStorage.fetchProjects(req.query.email, function(projects) {
             if(!projects || projects.length === 0) {
@@ -56,13 +56,12 @@ routes.goGenerate = function (req, res) {
         zipcode: req.body.zipcode,
         country: req.body.country,
         city: req.body.city,
-        programmingLanguage: req.body.programmingLanguage,
-        herokuauth: req.herokuauth
+        programmingLanguage: req.body.programmingLanguage
     };
     console.log(JSON.stringify(wakandaInstanceData));
 
     let projectCreator = new ProjectCreator(routes.requestSender, wakandaProjectStorage);
-    projectCreator.createProject(wakandaInstanceData);
+    projectCreator.createProject(wakandaInstanceData, req.body.herokuauth);
 };
 
 routes.generate = function(req, res) {

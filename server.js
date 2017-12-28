@@ -3,17 +3,17 @@ process.on('uncaughtException', function (error) {
 });
 
 var routes = require('./routes');
-var RequestSender = require('./app/RequestSender');
+var requestSender = require('./app/RequestSender');
 
 function run(callback, requestSenderService) {
     var express = require('express');
     var app = express();
     var bodyparser = require('body-parser');
 
-    app.set('port', (process.env.PORT || 6000));
+    app.set('port', (process.env.PORT || 8080));
     var server = app.listen(app.get('port'), function () {
         if (!process.env.ENCRYPT_KEY) {
-            process.env.ENCRYPT_KEY = "12345678";
+            process.env.ENCRYPT_KEY = "9bcDPot4";
             console.log("ERROR: WILL NOT WORK IF IS INTO PRODUCTION, ENCRYPT KEY NOT SET");
         }
 
@@ -44,7 +44,7 @@ function run(callback, requestSenderService) {
 
 if(!process.env.TEST_ENVIRONMENT) {
     console.log('Production Environment');
-    run(null, new RequestSender());
+    run(null, requestSender);
 } else {
     console.log('Test Environment');
 }

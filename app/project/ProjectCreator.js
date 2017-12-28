@@ -18,8 +18,8 @@ class ProjectCreator {
         };
     }
 
-    createProject(wakandaInstanceData) {
-        let herokuRequestSender = new HerokuRequestSender(wakandaInstanceData.herokuauth, this._requestSender);
+    createProject(wakandaInstanceData, herokuauth) {
+        let herokuRequestSender = new HerokuRequestSender(herokuauth, this._requestSender);
         let herokuAppGenerator = new HerokuAppGenerator(herokuRequestSender);
 
         var context = this;
@@ -29,16 +29,17 @@ class ProjectCreator {
             decryptKey: wakandaInstanceData.decryptKey,
             securityToken: wakandaInstanceData.securityToken
         }, function (appName, url) {
-            context.proceedProjectCreation(appName, url, wakandaInstanceData);
+            context.proceedProjectCreation(appName, url, wakandaInstanceData, herokuauth);
         });
     }
 
-    proceedProjectCreation(appName, url, wakandaData) {
+    proceedProjectCreation(appName, url, wakandaData, herokuauth) {
         console.log('Proceding with project creation ' + url);
+        let herokuRequestSender = new HerokuRequestSender(herokuauth, this._requestSender);
         wakandaData.decryptKey = RandomAsciiStringGenerator.randomAsciiString(8);
 
-        new HerokuSecurityUpdater(this._requestSender).configureSecurity(wakandaData.decryptKey, appName);
-        new HerokuDatabaseConfigurator(this._requestSender).configureMongo(appName);
+        new HerokuSecurityUpdater(herokuRequestSender).configureSecurity(wakandaData.decryptKey, appName);
+        new HerokuDatabaseConfigurator(herokuRequestSender).configureMongo(appName);
 
         wakandaData.url = url;
         wakandaData.apiKey = this._createApiKey(wakandaData);

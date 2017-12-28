@@ -17,7 +17,7 @@ class WakandaApiKeyRegister {
         }).toString();
 
         let options = {
-            url: 'https://wakanda-statistic-receiver.herokuapp.com/apikey',
+            url: 'https://wakanda-statistic-receiver2.herokuapp.com/apikey',
             method: 'POST',
             json: {
                 wakandaInstanceData : json
@@ -33,7 +33,7 @@ class WakandaApiKeyRegister {
     unregisterApp(apiKey) {
         var options = {
             method: 'DELETE',
-            url: 'http://wakanda-statistic-receiver.herokuapp.com/apikey',
+            url: 'http://wakanda-statistic-receiver2.herokuapp.com/apikey',
             qs: {apiKey: apiKey}
         };
 

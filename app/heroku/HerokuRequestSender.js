@@ -13,6 +13,7 @@ class HerokuRequestSender {
             'Accept': 'application/vnd.heroku+json; version=3',
             'Authorization': 'Bearer ' + this.herokuauth
         };
+        console.log('Cheguei aqui com OPTIONS => ' + JSON.stringify(options));
         this.requestSender.request(options, callback);
     }
 }

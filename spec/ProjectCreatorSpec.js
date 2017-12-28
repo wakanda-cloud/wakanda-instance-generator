@@ -15,7 +15,7 @@ describe('Project Creation', function () {
     beforeEach(function () {
         requestMock = new RequestSenderMock();
         repositoryMock = new ProjectRepositoryMock();
-        projectCreatorInstance = new ProjectCreator(new HerokuRequestSender(herokuauth, requestMock), repositoryMock);
+        projectCreatorInstance = new ProjectCreator(requestMock, repositoryMock);
         process.env.ENCRYPT_KEY = '12345678';
     });
 
@@ -25,7 +25,7 @@ describe('Project Creation', function () {
             name: 'The Chosen @ne'
         };
 
-        projectCreatorInstance.createProject(data);
+        projectCreatorInstance.createProject(data, herokuauth);
         var requestBody = requestMock.options;
         var appName = JSON.parse(requestBody.body).app.name;
 
@@ -35,7 +35,7 @@ describe('Project Creation', function () {
     it('should fire heroku project creation with received herokuauth on header with correct content type and accept rule', function () {
         let data = getDefaultWakandaInstanceData();
 
-        projectCreatorInstance.createProject(data);
+        projectCreatorInstance.createProject(data, herokuauth);
 
         expect('application/json').toEqual(requestMock.options.headers['Content-Type']);
         expect('application/vnd.heroku+json; version=3').toEqual(requestMock.options.headers['Accept']);
@@ -50,7 +50,7 @@ describe('Project Creation', function () {
             securityToken: 'B0835@34'
         };
 
-        projectCreatorInstance.createProject(data);
+        projectCreatorInstance.createProject(data, herokuauth);
 
         let expectHerokuRequest = {
             url: 'https://api.heroku.com/app-setups',
@@ -72,7 +72,7 @@ describe('Project Creation', function () {
     it('should call configure security after project creation', function() {
         let data = getDefaultWakandaInstanceData();
         requestMock.responseStatus(200);
-        projectCreatorInstance.createProject(data);
+        projectCreatorInstance.createProject(data, herokuauth);
 
         var expected = {
             url: 'https://api.heroku.com/apps/wakanda-projectcreationspec/config-vars',
@@ -81,13 +81,16 @@ describe('Project Creation', function () {
             body: '{ \"DECRYPT_KEY\":\"' + data.decryptKey + '\" }'
         };
 
-        expect(expected).toEqual(requestMock.options[1]);
+        expect(expected.url).toEqual(requestMock.options[1].url);
+        expect(expected.method).toEqual(requestMock.options[1].method);
+        expect(expected.body).toEqual(requestMock.options[1].body);
+        expect(expected.headers).toEqual(requestMock.options[1].headers);
     });
 
     it('should configure database after security configuration with correct data', function() {
         let data = getDefaultWakandaInstanceData();
         requestMock.responseStatus(200);
-        projectCreatorInstance.createProject(data);
+        projectCreatorInstance.createProject(data, herokuauth);
 
         var expectedBody = {
             url: 'https://api.heroku.com/apps/wakanda-projectcreationspec/addons',
@@ -104,7 +107,7 @@ describe('Project Creation', function () {
     it('should encrypt wakandaInstanceData with process.env.ENCRYPT_KEY to send request', function() {
         let data = getDefaultWakandaInstanceData();
         requestMock.responseStatus(200);
-        projectCreatorInstance.createProject(data);
+        projectCreatorInstance.createProject(data, herokuauth);
 
         let apiKeyRegisterRequest = requestMock.options[3];
         expect('https://wakanda-statistic-receiver.herokuapp.com/apikey').toEqual(apiKeyRegisterRequest.url);

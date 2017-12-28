@@ -34,7 +34,6 @@ class HerokuAppGenerator {
         let options = {
             url: 'https://api.heroku.com/app-setups',
             method: 'POST',
-            headers: this.headers,
             body: JSON.stringify(data)
         };
 
