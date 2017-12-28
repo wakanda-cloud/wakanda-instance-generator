@@ -8,9 +8,9 @@
   "scripts": {
     "start": "node server.js",
     "test": "jasmine JASMINE_CONFIG_PATH=jasmine.json",
-    "coverage": "istanbul cover -x *spec/helpers/*.js jasmine JASMINE_CONFIG_PATH=jasmine.json",
+    "coverage": "istanbul cover -x *spec/helpers/*.js -x *app/RequestSender.js jasmine JASMINE_CONFIG_PATH=jasmine.json",
     "coverage-report": "istanbul cover -x *spec/helpers/*.js -x *app/RequestSender.js jasmine JASMINE_CONFIG_PATH=jasmine.json && firefox coverage/lcov-report/index.html ",
-    "test-coverage": "istanbul cover -x *spec/helpers/*.js jasmine JASMINE_CONFIG_PATH=jasmine.json && codecov"
+    "test-coverage": "istanbul cover -x *spec/helpers/*.js -x *app/RequestSender.js  jasmine JASMINE_CONFIG_PATH=jasmine.json && codecov"
   },
   "dependencies": {
     "body-parser": "~1.17.1",
