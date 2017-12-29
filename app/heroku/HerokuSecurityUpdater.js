@@ -6,9 +6,12 @@ class HerokuSecurityUpdater {
         this._requestSender = requestSender;
     }
 
-    configureSecurity(decryptKey, appName) {
+    configureSecurity(decryptKey, apiKey, appName) {
         console.log('Configuring security for ' + appName);
-        var dataString = '{ \"DECRYPT_KEY\":\"' + decryptKey + '\" }';
+        var dataString = JSON.stringify({
+            DECRYPT_KEY : decryptKey,
+            API_KEY : apiKey
+        });
 
         var options = {
             url: 'https://api.heroku.com/apps/' + appName + '/config-vars',

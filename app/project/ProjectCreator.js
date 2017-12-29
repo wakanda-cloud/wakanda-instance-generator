@@ -13,8 +13,8 @@ class ProjectCreator {
         this._requestSender = requestSender;
         this._projectRepository = projectRepository;
 
-        this._createApiKey = function (wakandaData) {
-            return crypto.createHash('md5').update(JSON.stringify(wakandaData.name)).digest('hex');
+        this._createApiKey = function (appName) {
+            return crypto.createHash('md5').update(JSON.stringify(appName)).digest('hex');
         };
     }
 
@@ -38,11 +38,11 @@ class ProjectCreator {
         let herokuRequestSender = new HerokuRequestSender(herokuauth, this._requestSender);
         wakandaData.decryptKey = RandomAsciiStringGenerator.randomAsciiString(8);
 
-        new HerokuSecurityUpdater(herokuRequestSender).configureSecurity(wakandaData.decryptKey, appName);
-        new HerokuDatabaseConfigurator(herokuRequestSender).configureMongo(appName);
-
         wakandaData.url = url;
-        wakandaData.apiKey = this._createApiKey(wakandaData);
+        wakandaData.apiKey = this._createApiKey(appName);
+
+        new HerokuSecurityUpdater(herokuRequestSender).configureSecurity(wakandaData.decryptKey, wakandaData.apiKey, appName);
+        new HerokuDatabaseConfigurator(herokuRequestSender).configureMongo(appName);
 
         this._projectRepository.saveProject(wakandaData);
         new WakandaApiKeyRegister(this._requestSender).registerApiKey(wakandaData);

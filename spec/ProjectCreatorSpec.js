@@ -74,17 +74,11 @@ describe('Project Creation', function () {
         requestMock.responseStatus(200);
         projectCreatorInstance.createProject(data, herokuauth);
 
-        var expected = {
-            url: 'https://api.heroku.com/apps/wakanda-projectcreationspec/config-vars',
-            method: 'PATCH',
-            headers: herokuHeader(herokuauth),
-            body: '{ \"DECRYPT_KEY\":\"' + data.decryptKey + '\" }'
-        };
-
-        expect(expected.url).toEqual(requestMock.options[1].url);
-        expect(expected.method).toEqual(requestMock.options[1].method);
-        expect(expected.body).toEqual(requestMock.options[1].body);
-        expect(expected.headers).toEqual(requestMock.options[1].headers);
+        expect('https://api.heroku.com/apps/wakanda-projectcreationspec/config-vars').toEqual(requestMock.options[1].url);
+        expect('PATCH').toEqual(requestMock.options[1].method);
+        expect(herokuHeader(herokuauth)).toEqual(requestMock.options[1].headers);
+        expect(data.decryptKey).toEqual(JSON.parse(requestMock.options[1].body).DECRYPT_KEY);
+        expect(projectCreatorInstance._createApiKey('wakanda-projectcreationspec')).toEqual(JSON.parse(requestMock.options[1].body).API_KEY);
     });
 
     it('should configure database after security configuration with correct data', function() {
@@ -101,7 +95,7 @@ describe('Project Creation', function () {
 
         expect(expectedBody).toEqual(requestMock.options[2]);
         expect('https://wakanda-projectcreationspec.herokuapp.com').toEqual(repositoryMock.saveProjectData.url);
-        expect(projectCreatorInstance._createApiKey(data)).toEqual(repositoryMock.saveProjectData.apiKey);
+        expect(projectCreatorInstance._createApiKey('wakanda-projectcreationspec')).toEqual(repositoryMock.saveProjectData.apiKey);
     });
 
     it('should encrypt wakandaInstanceData with process.env.ENCRYPT_KEY to send request', function() {
