@@ -9,7 +9,7 @@ class WakandaApiKeyRegister {
     }
 
     registerApiKey(wakandaInstanceData) {
-        console.log('Registering API Key for ' + wakandaInstanceData.name);
+        console.log('Registering API Key ' + wakandaInstanceData.apiKey + ' for ' + wakandaInstanceData.name);
         let text = JSON.stringify(wakandaInstanceData);
 
         let json = CryptoJS.AES.encrypt(text, process.env.ENCRYPT_KEY, {
