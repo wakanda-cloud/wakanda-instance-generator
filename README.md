@@ -1,0 +1,2 @@
+# wakanda-instance-generator
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/36d5784ddf0845d688e93212bdd6ffbc)](https://www.codacy.com/app/lucasventurasc/wakanda-instance-generator?utm_source=github.com&utm_medium=referral&utm_content=wakanda-cloud/wakanda-instance-generator&utm_campaign=badger)
