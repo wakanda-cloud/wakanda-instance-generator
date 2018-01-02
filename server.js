@@ -18,7 +18,7 @@ function run(callback, requestSenderService) {
         }
 
         if(!process.env.WAKANDA_STATISTIC_RECEIVER) {
-            process.env.WAKANDA_STATISTIC_RECEIVER = 'https://wakanda-statistic-receiver.herokuapp.com'
+            throw "WAKANDA STATISTIC RECEIVER NOT CONFIGURATED SERVER WILL NOT START";
         }
 
         var host = process.env.host;
