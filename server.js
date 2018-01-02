@@ -17,6 +17,10 @@ function run(callback, requestSenderService) {
             console.log("ERROR: WILL NOT WORK IF IS INTO PRODUCTION, ENCRYPT KEY NOT SET");
         }
 
+        if(!process.env.WAKANDA_STATISTIC_RECEIVER) {
+            process.env.WAKANDA_STATISTIC_RECEIVER = 'https://wakanda-statistic-receiver.herokuapp.com'
+        }
+
         var host = process.env.host;
         var port = app.get('port');
 

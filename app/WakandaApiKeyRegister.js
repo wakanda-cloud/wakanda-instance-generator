@@ -17,7 +17,7 @@ class WakandaApiKeyRegister {
         }).toString();
 
         let options = {
-            url: 'https://wakanda-statistic-receiver.herokuapp.com/apikey',
+            url: process.env.WAKANDA_STATISTIC_RECEIVER + '/apikey',
             method: 'POST',
             json: {
                 wakandaInstanceData : json
