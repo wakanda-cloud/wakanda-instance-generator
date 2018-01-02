@@ -1,13 +1,17 @@
 'use strict';
 
+const ProjectRepository = require('./ProjectRepository');
+
 var redis = require('./RedisConnector');
 var CryptoJS = require('crypto-js');
-var AppNameGenerator = require('./utils/AppNameGenerator');
+var AppNameGenerator = require('../project/AppNameGenerator');
 
-class WakandaProjectStorage {
+class WakandaProjectStorage extends ProjectRepository {
 
     saveProject(wakandaInstanceData) {
+        console.log('Saving project app ' + wakandaInstanceData.name);
         redis.get(wakandaInstanceData.ownerEmail, function (error, data) {
+            if(error) throw error;
             let arrayData = data ? JSON.parse(data) : [];
             arrayData.push(wakandaInstanceData);
             redis.set(wakandaInstanceData.ownerEmail, JSON.stringify(arrayData));
@@ -28,17 +32,25 @@ class WakandaProjectStorage {
             return AppNameGenerator.buildAppUrl(appName) + "/listStatistics?payload=" + token;
         };
 
+        console.log('Will read projects from email: ' + email);
         redis.get(email, function (error, projectsJsonStringified) {
+            if(error) throw error;
             let projectsArray = JSON.parse(projectsJsonStringified);
-            projectsArray.forEach(function(project) {
-                project.linkSearchAPI = buildLinkAPISearch(project);
-            });
-            callback.call(this, JSON.stringify(projectsArray));
+
+            if(projectsArray !== null) {
+                projectsArray.forEach(function(project) {
+                    project.linkSearchAPI = buildLinkAPISearch(project);
+                });
+                callback.call(this, JSON.stringify(projectsArray));
+            } else {
+                callback.call(this, null);
+            }
         });
     }
 
     findProjectByApiKey(email, apiKey, onDone) {
         redis.get(email, function (error, data) {
+            if(error) throw error;
             let arrayData = data ? JSON.parse(data) : [];
             arrayData.forEach(function (element, index) {
                 if(element.apiKey === apiKey) {
@@ -55,7 +67,7 @@ class WakandaProjectStorage {
             let newArrayData = [];
 
             arrayData.forEach(function(element, index) {
-                let appNameFound = context.getAppName(element);
+                let appNameFound = context._getAppName(element);
                 if(appNameFound !== appName) {
                     newArrayData.push(element);
                 }
@@ -65,9 +77,9 @@ class WakandaProjectStorage {
         })
     }
 
-    getAppName(wakandaInstanceData) {
-        return wakandaInstanceData.url.split("\.herokuapp\.com")[0].replace("https://", "");
+    _getAppName(wakandaInstanceData) {
+        return AppNameGenerator.extractAppNameFromUrl(wakandaInstanceData.url);
     }
 }
 
-module.exports = WakandaProjectStorage;
+module.exports = new WakandaProjectStorage();

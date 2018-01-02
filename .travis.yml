@@ -1,0 +1,9 @@
+language: node_js
+node_js:
+  - "6"
+services:
+  - redis-server
+script:
+  - npm run test-coverage
+env:
+  - REDIS_TRAVIS=true

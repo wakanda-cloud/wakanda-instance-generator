@@ -1,23 +1,21 @@
 'use strict';
 
-var request = require('request');
-
 class HerokuSecurityUpdater {
 
-    configureSecurity(decryptKey, appName) {
+    constructor(requestSender) {
+        this._requestSender = requestSender;
+    }
 
-        var headers = {
-            'Content-Type': 'application/json',
-            'Accept': 'application/vnd.heroku+json; version=3',
-            'Authorization': process.env.herokuauth
-        };
-
-        var dataString = '{ \"DECRYPT_KEY\":\"' + decryptKey + '\" }';
+    configureSecurity(decryptKey, apiKey, appName) {
+        console.log('Configuring security for ' + appName);
+        var dataString = JSON.stringify({
+            DECRYPT_KEY : decryptKey,
+            API_KEY : apiKey
+        });
 
         var options = {
             url: 'https://api.heroku.com/apps/' + appName + '/config-vars',
             method: 'PATCH',
-            headers: headers,
             body: dataString
         };
 
@@ -27,7 +25,7 @@ class HerokuSecurityUpdater {
             }
             console.log(body);
         }
-        request(options, callback);
+        this._requestSender.request(options, callback);
     }
 }
 

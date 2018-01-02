@@ -2,20 +2,33 @@
   "name": "wakanda-instance-generator",
   "version": "0.0.0",
   "private": true,
+  "engines": {
+    "node": "6.4.0"
+  },
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "test": "jasmine JASMINE_CONFIG_PATH=jasmine.json",
+    "coverage": "istanbul cover -x *spec/helpers/*.js -x *app/RequestSender.js jasmine JASMINE_CONFIG_PATH=jasmine.json",
+    "coverage-report": "istanbul cover -x *spec/helpers/*.js -x *app/RequestSender.js jasmine JASMINE_CONFIG_PATH=jasmine.json && firefox coverage/lcov-report/index.html ",
+    "test-coverage": "istanbul cover -x *spec/helpers/*.js -x *app/RequestSender.js  jasmine JASMINE_CONFIG_PATH=jasmine.json && codecov"
   },
   "dependencies": {
     "body-parser": "~1.17.1",
     "bytes": "latest",
     "cookie-parser": "~1.4.3",
     "cors": "^2.8.3",
-    "crypto-js": "latest",
+    "crypto-js": "3.1.9-1",
     "debug": "~2.6.3",
     "express": "~4.15.2",
+    "jasmine": "^2.8.0",
     "mcrypt": "^0.1.12",
     "morgan": "~1.8.1",
     "redis": "^2.7.1",
-    "request": "^2.81.0"
+    "request": "^2.81.0",
+    "redis-js": "^0.1.2"
+  },
+  "devDependencies": {
+    "codecov": "^3.0.0",
+    "istanbul": "^0.4.5"
   }
 }

@@ -1,12 +1,14 @@
 'use strict';
-
-let routes = function(){};
-
-let WakandaProjectStorage = require('./app/WakandaProjectStorage');
-let HerokuAppGenerator = require('./app/HerokuAppGenerator');
-let ProjectCreator = require('./app/ProjectCreator');
+let wakandaProjectStorage = require('./app/repository/WakandaProjectStorage');
+let HerokuAppGenerator = require('./app/heroku/HerokuAppGenerator');
+let ProjectCreator = require('./app/project/ProjectCreator');
 let WakandaAuthenticator = require('./app/WakandaAuthenticator');
-let WakandaApiKeyRegister = require('./app/WakandaApiKeyRegister');
+let ProjectRemover = require('./app/project/ProjectRemover');
+
+let routes = function() {};
+routes.injectRequestSender = function(requestSender) {
+    routes.requestSender = requestSender;
+};
 
 routes.deleteProject = function (req, res) {
     var onError = function(status) {
@@ -17,26 +19,23 @@ routes.deleteProject = function (req, res) {
     let apiKey = req.query.apiKey;
     let token = req.query.token;
 
-    new WakandaAuthenticator().authenticate(email, token, function() {
-        let wakandaProjectStorage = new WakandaProjectStorage();
-        wakandaProjectStorage.findProjectByApiKey(email, apiKey, function(project) {
-            let appName = wakandaProjectStorage.getAppName(project);
-            new WakandaProjectStorage().deleteProject(email, appName);
-            new WakandaApiKeyRegister().unregisterApp(apiKey);
-            new HerokuAppGenerator().delete(appName);
-        });
+    new WakandaAuthenticator(routes.requestSender).authenticate(email, token, function() {
+        let projectRemover = new ProjectRemover(routes.requestSender, wakandaProjectStorage);
+        projectRemover.removeProject(email, apiKey, req.query.herokuauth);
     }, onError);
 
     res.status(202).send();
 };
 
 routes.projects = function (req ,res) {
+    console.log("routes.js => Fetching projects");
     var onError = function(status) {
+        console.log('I got some status from email : ' +req.query.email+ ' status: ' + status);
         res.status(status).send();
     };
 
-    new WakandaAuthenticator().authenticate(req.query.email, req.query.token, function() {
-        let wakandaProjectStorage = new WakandaProjectStorage();
+    console.log('I will see the email: ' + req.query.email);
+    new WakandaAuthenticator(routes.requestSender).authenticate(req.query.email, req.query.token, function() {
         wakandaProjectStorage.fetchProjects(req.query.email, function(projects) {
             if(!projects || projects.length === 0) {
                 res.status(204).send();
@@ -57,12 +56,12 @@ routes.goGenerate = function (req, res) {
         zipcode: req.body.zipcode,
         country: req.body.country,
         city: req.body.city,
-        programmingLanguage: req.body.programmingLanguage,
-
+        programmingLanguage: req.body.programmingLanguage
     };
     console.log(JSON.stringify(wakandaInstanceData));
 
-    ProjectCreator.createProject(wakandaInstanceData);
+    let projectCreator = new ProjectCreator(routes.requestSender, wakandaProjectStorage);
+    projectCreator.createProject(wakandaInstanceData, req.body.herokuauth);
 };
 
 routes.generate = function(req, res) {
@@ -70,20 +69,19 @@ routes.generate = function(req, res) {
         res.status(400).send("App name is necessary");
         return;
     }
-    if(!process.env.herokuauth) {
-        res.status(500).send("Auth not configured for this server");
-        throw "Heroku Auth (key:herokuauth) not configured for this server";
-    }
+    //if(!process.env.herokuauth) {
+        //res.status(500).send("Auth not configured for this server");
+        //throw "Heroku Auth (key:herokuauth) not configured for this server";
+    //}
 
     var onError = function(status) {
         res.status(status).send();
     };
 
-    new WakandaAuthenticator().authenticate(req.body.ownerEmail, req.body.token, function() {
+    new WakandaAuthenticator(routes.requestSender).authenticate(req.body.ownerEmail, req.body.token, function() {
+        res.status(202).send();
         routes.goGenerate(req, res);
     }, onError);
-
-    res.status(202).send();
 };
 
 module.exports = routes;
